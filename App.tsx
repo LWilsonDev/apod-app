@@ -1,21 +1,23 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import "react-native-gesture-handler";
+import {StatusBar} from "expo-status-bar";
+import React from "react";
+import {StyleSheet, View} from "react-native";
+import {AppColors} from "./layout";
+import Home from "./src/screens/Home";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View style={styles.view}>
+      <StatusBar hidden={true} />
+      <Home />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  view: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    backgroundColor: AppColors.dark,
   },
 });

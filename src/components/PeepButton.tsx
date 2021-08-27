@@ -16,11 +16,7 @@ const PeepButton: React.FC<PeepButtonProps> = ({onPress}) => {
       onPress={onPress}
     >
       <View style={styles.drag}>
-        <MaterialIcons
-          name={"drag-handle"}
-          size={BUTTON_SIZE}
-          color={AppColors.light}
-        />
+        <MaterialIcons name={"drag-handle"} size={30} color={AppColors.light} />
       </View>
     </Pressable>
   );
@@ -33,6 +29,6 @@ const styles = StyleSheet.create({
     height: PEEP_SIZE,
     width: "100%",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start",
   },
 });

@@ -35,14 +35,15 @@ import {snapPoint} from "react-native-redash";
 import InfoText from "../components/InfoText";
 import PeepButton from "../components/PeepButton";
 import {MaterialCommunityIcons} from "@expo/vector-icons";
+import {StatusBar} from "expo-status-bar";
 
-const MENU_ICON_SIZE = 40;
+const MENU_ICON_SIZE = 30;
 const TOP_BAR = PEEP_SIZE + spacing.regular;
 
-const Home = () => {
+const Home = ({navigation}: any) => {
   const [apod, setApod] = useState<ApodData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [showPeep, setShowPeep] = useState<boolean>(false);
+  const [showPeep, setShowPeep] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isFavourite, setIsFavourite] = useState(false);
 
@@ -54,7 +55,7 @@ const Home = () => {
 
   const INFO_PEEP_SHOW = INFO_HEIGHT - PEEP_SIZE;
 
-  const infoYPosition = useSharedValue(INFO_CLOSED);
+  const infoYPosition = useSharedValue(INFO_PEEP_SHOW);
 
   const snapPointsY = [height, TOP_BAR - spacing.double];
   const animInfoStyle = useAnimatedStyle(() => {
@@ -95,20 +96,20 @@ const Home = () => {
   });
 
   const handlePeepPress = () => {
+    // When peep is pressed, toggle info
     const position = showPeep ? INFO_OPEN : INFO_CLOSED;
     infoYPosition.value = withSpring(position, configNoSpring);
     setShowPeep(false);
   };
 
   const handleImagePress = () => {
-    //When the image is pressed, we show the peep of the info
-    // If it's pressed again, hide the info
-    if (showPeep) {
-      // hide
-      infoYPosition.value = withSpring(INFO_CLOSED, configNoSpring);
-    } else {
-      infoYPosition.value = withSpring(INFO_PEEP_SHOW, configWithSpring);
-    }
+    // When the image is pressed, toggle peep
+    const values = showPeep
+      ? {to: INFO_CLOSED, config: configNoSpring}
+      : {to: INFO_PEEP_SHOW, config: configWithSpring};
+
+    infoYPosition.value = withSpring(values.to, values.config);
+
     setShowPeep(!showPeep);
   };
 
@@ -129,13 +130,14 @@ const Home = () => {
         setLoading(false);
       });
     } catch (e) {
-      setError("Houston, we have a problem...");
+      setError("Houston, we have a problem..."); // had to be done.
       setLoading(false);
     }
   }, [apod]);
 
   return (
-    <>
+    <View style={styles.wrap}>
+      <StatusBar hidden={true} />
       <View style={styles.view}>
         {loading ? <Text style={styles.loading}>Loading...</Text> : null}
         {error ? <Text style={styles.loading}>{error}</Text> : null}
@@ -155,7 +157,10 @@ const Home = () => {
         )}
       </View>
       <Animated.View style={[styles.starContainer, topMenuAnimatedStyle]}>
-        <Pressable style={[styles.pressable]}>
+        <Pressable
+          onPress={() => navigation.openDrawer()}
+          style={[styles.pressable]}
+        >
           <MaterialCommunityIcons
             name={"menu"}
             size={MENU_ICON_SIZE}
@@ -173,13 +178,18 @@ const Home = () => {
           />
         </Pressable>
       </Animated.View>
-    </>
+    </View>
   );
 };
 
 export default Home;
 
 const styles = StyleSheet.create({
+  wrap: {
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: AppColors.dark,
+  },
   view: {
     ...StyleSheet.absoluteFillObject,
     alignContent: "center",
@@ -187,7 +197,9 @@ const styles = StyleSheet.create({
   },
   pressable: {
     minHeight: BUTTON_SIZE, // important for accessibility
-    justifyContent: "center",
+    justifyContent: "flex-end",
+    paddingBottom: spacing.regular,
+    paddingHorizontal: spacing.regular,
   },
   starContainer: {
     flexDirection: "row",

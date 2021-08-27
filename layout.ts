@@ -11,7 +11,7 @@ export enum spacing {
 }
 
 export const BUTTON_SIZE = 49;
-export const PEEP_SIZE = 60;
+export const PEEP_SIZE = 50;
 export const BORDER_RADIUS = 20;
 
 export const OPACITY = 0.9;

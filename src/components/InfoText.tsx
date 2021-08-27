@@ -1,10 +1,10 @@
 import React from "react";
 import {ScrollView, StyleSheet, Text} from "react-native";
 import {spacing, AppColors} from "../../layout";
-import {apodResponse} from "../api/api";
+import {ApodData} from "../api/api";
 
 interface InfoTextProps {
-  apod: apodResponse;
+  apod: ApodData;
 }
 
 const InfoText: React.FC<InfoTextProps> = ({apod}) => {
@@ -37,7 +37,8 @@ const styles = StyleSheet.create({
     fontSize: 26,
     lineHeight: 32,
     textAlign: "center",
-    marginBottom: spacing.regular,
+    marginTop: spacing.regular,
+    marginBottom: spacing.double,
   },
   copyright: {
     fontSize: 14,

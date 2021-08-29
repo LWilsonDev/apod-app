@@ -1,6 +1,6 @@
 import React from "react";
 import {Pressable, StyleSheet, Text, View} from "react-native";
-import {AppColors, BUTTON_SIZE, PEEP_SIZE} from "../../layout";
+import {AppColors, BUTTON_SIZE, PEEP_BTN_HEIGHT} from "../../layout";
 import {MaterialIcons} from "@expo/vector-icons";
 
 interface PeepButtonProps {
@@ -26,7 +26,7 @@ export default PeepButton;
 
 const styles = StyleSheet.create({
   drag: {
-    height: PEEP_SIZE,
+    height: PEEP_BTN_HEIGHT,
     width: "100%",
     alignItems: "center",
     justifyContent: "flex-start",

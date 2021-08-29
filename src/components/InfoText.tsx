@@ -1,6 +1,6 @@
 import React from "react";
-import {ScrollView, StyleSheet, Text} from "react-native";
-import {spacing, AppColors} from "../../layout";
+import {ScrollView, StyleSheet, Text, View} from "react-native";
+import {Spacing, AppColors, FontSize, LineHeight} from "../../layout";
 import {ApodData} from "../api/api";
 
 interface InfoTextProps {
@@ -17,9 +17,15 @@ const InfoText: React.FC<InfoTextProps> = ({apod}) => {
         {apod.title}
       </Text>
       <Text style={styles.apodText}>{apod?.explanation}</Text>
-      <Text style={[styles.apodText, styles.copyright]}>
-        Image credits: {apod?.copyright ?? "In the public domain"}
-      </Text>
+      {apod.copyright ? (
+        <Text style={[styles.apodText, styles.copyright]}>
+          Image credits: {apod?.copyright}
+        </Text>
+      ) : (
+        <Text style={[styles.apodText, styles.copyright]}>
+          Image is in the public domain
+        </Text>
+      )}
     </ScrollView>
   );
 };
@@ -28,21 +34,21 @@ export default InfoText;
 
 const styles = StyleSheet.create({
   apodText: {
-    marginHorizontal: spacing.regular,
-    fontSize: 18,
+    marginHorizontal: Spacing.regular,
+    fontSize: FontSize.regular,
     color: AppColors.light,
-    lineHeight: 26,
+    lineHeight: LineHeight.regular,
   },
   title: {
-    fontSize: 26,
-    lineHeight: 32,
+    fontSize: FontSize.large,
+    lineHeight: LineHeight.large,
     textAlign: "center",
-    marginTop: spacing.regular,
-    marginBottom: spacing.double,
+    marginTop: Spacing.regular,
+    marginBottom: Spacing.double,
   },
   copyright: {
-    fontSize: 14,
-    paddingTop: spacing.double,
+    fontSize: FontSize.small,
+    paddingTop: Spacing.double,
     paddingBottom: 100,
   },
 });

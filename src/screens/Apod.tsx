@@ -14,9 +14,10 @@ import {
   BUTTON_SIZE,
   configNoSpring,
   configWithSpring,
+  FontSize,
   OPACITY,
-  PEEP_SIZE,
-  spacing,
+  PEEP_BTN_HEIGHT,
+  Spacing,
 } from "../../layout";
 import Animated, {
   Extrapolate,
@@ -34,30 +35,65 @@ import {
 import {snapPoint} from "react-native-redash";
 import InfoText from "../components/InfoText";
 import PeepButton from "../components/PeepButton";
-import {MaterialCommunityIcons} from "@expo/vector-icons";
 import {StatusBar} from "expo-status-bar";
+import ApodVideo from "../components/ApodVideo";
+import moment from "moment";
+import MenuIcon from "../components/MenuIcon";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
+import Search from "../components/Search";
 
-const MENU_ICON_SIZE = 30;
-const TOP_BAR = PEEP_SIZE + spacing.regular;
-
-const Home = ({navigation}: any) => {
+const Apod = ({navigation, route}: any) => {
   const [apod, setApod] = useState<ApodData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [showPeep, setShowPeep] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isFavourite, setIsFavourite] = useState(false);
+  const [isVideo, setIsVideo] = useState(false);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [date, setDate] = useState(new Date());
 
-  const {height} = useWindowDimensions();
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
 
-  const INFO_OPEN = TOP_BAR - spacing.double;
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirmDatePick = (newDate: Date) => {
+    console.warn("A date has been picked: ", newDate);
+    setDate(newDate);
+    const dateForApi = moment(newDate).format("YYYY-MM-DD");
+    if (dateForApi === apod?.date) {
+      return;
+    }
+    // fetch the new apod and close date picker
+    setLoading(true);
+    fetchData(dateForApi).then((res: APODResponse) => {
+      if (res.success && res.data) {
+        setApod(res.data);
+      } else if (res.error) {
+        setError(res.error);
+      }
+      setLoading(false);
+    });
+    hideDatePicker();
+  };
+
+  const insets = useSafeAreaInsets();
+  const PEEP_SIZE = PEEP_BTN_HEIGHT + insets.bottom;
+  const TOP_BAR = PEEP_BTN_HEIGHT + insets.top;
+
+  const {height, width} = useWindowDimensions();
+
+  const INFO_OPEN = TOP_BAR - Spacing.double;
   const INFO_HEIGHT = height - INFO_OPEN;
-  const INFO_CLOSED = INFO_HEIGHT;
-
-  const INFO_PEEP_SHOW = INFO_HEIGHT - PEEP_SIZE;
+  const INFO_PEEP_SHOW = INFO_HEIGHT - PEEP_BTN_HEIGHT;
+  const INFO_CLOSED = isVideo ? INFO_PEEP_SHOW : INFO_HEIGHT;
 
   const infoYPosition = useSharedValue(INFO_PEEP_SHOW);
 
-  const snapPointsY = [height, TOP_BAR - spacing.double];
+  const snapPointsY = [height, INFO_OPEN];
   const animInfoStyle = useAnimatedStyle(() => {
     return {
       height: INFO_HEIGHT, // The info text height should always be most of the screen, regardless of content size
@@ -118,20 +154,21 @@ const Home = ({navigation}: any) => {
     if (apod) {
       return;
     }
+    console.log("get apod in UE");
     setLoading(true);
-
-    try {
-      fetchData().then((res: APODResponse) => {
-        if (res.success && res.data) {
-          setApod(res.data);
-        } else if (res.error) {
-          setError(res.error);
-        }
-        setLoading(false);
-      });
-    } catch (e) {
-      setError("Houston, we have a problem..."); // had to be done.
+    fetchData().then((res: APODResponse) => {
+      if (res.success && res.data) {
+        setApod(res.data);
+      } else if (res.error) {
+        setError(res.error);
+      }
       setLoading(false);
+    });
+  }, [apod]);
+
+  useEffect(() => {
+    if (apod && apod.media_type === "video") {
+      setIsVideo(true);
     }
   }, [apod]);
 
@@ -141,9 +178,17 @@ const Home = ({navigation}: any) => {
       <View style={styles.view}>
         {loading ? <Text style={styles.loading}>Loading...</Text> : null}
         {error ? <Text style={styles.loading}>{error}</Text> : null}
-        {apod ? (
-          <ApodImage onPress={handleImagePress} uri={apod.url}></ApodImage>
-        ) : null}
+        {apod &&
+          (apod.media_type === "video" ? (
+            <ApodVideo
+              width={width}
+              height={height - TOP_BAR - PEEP_SIZE - Spacing.double}
+              uri={apod?.url}
+              thumbnailUri={apod.thumbnail_url}
+            />
+          ) : (
+            <ApodImage onPress={handleImagePress} uri={apod.url} />
+          ))}
 
         {apod && (
           <Animated.View style={[styles.infoView, animInfoStyle]}>
@@ -156,33 +201,38 @@ const Home = ({navigation}: any) => {
           </Animated.View>
         )}
       </View>
-      <Animated.View style={[styles.starContainer, topMenuAnimatedStyle]}>
-        <Pressable
-          onPress={() => navigation.openDrawer()}
-          style={[styles.pressable]}
-        >
-          <MaterialCommunityIcons
-            name={"menu"}
-            size={MENU_ICON_SIZE}
-            color={AppColors.light}
-          />
-        </Pressable>
-        <Pressable
-          onPress={() => setIsFavourite(!isFavourite)}
-          style={[styles.pressable]}
-        >
-          <MaterialCommunityIcons
-            name={isFavourite ? "star" : "star-outline"}
-            size={MENU_ICON_SIZE}
-            color={AppColors.light}
-          />
-        </Pressable>
+      <Animated.View
+        style={[
+          styles.starContainer,
+          {height: TOP_BAR},
+          isVideo ? {opacity: 1} : topMenuAnimatedStyle,
+        ]}
+      >
+        <MenuIcon icon="menu" onPress={() => navigation.openDrawer()} />
+        {apod && (
+          <>
+            <Pressable style={styles.pressable} onPress={showDatePicker}>
+              <Text style={styles.date}>
+                {moment(date).format("MMM Do YY")}
+              </Text>
+            </Pressable>
+            <Search
+              visible={isDatePickerVisible}
+              onConfirm={handleConfirmDatePick}
+              onCancel={hideDatePicker}
+            />
+            <MenuIcon
+              icon={isFavourite ? "star" : "star-outline"}
+              onPress={() => setIsFavourite(!isFavourite)}
+            />
+          </>
+        )}
       </Animated.View>
     </View>
   );
 };
 
-export default Home;
+export default Apod;
 
 const styles = StyleSheet.create({
   wrap: {
@@ -196,16 +246,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   pressable: {
-    minHeight: BUTTON_SIZE, // important for accessibility
-    justifyContent: "flex-end",
-    paddingBottom: spacing.regular,
-    paddingHorizontal: spacing.regular,
+    minHeight: BUTTON_SIZE,
+    justifyContent: "center",
+    paddingHorizontal: Spacing.regular,
   },
   starContainer: {
     flexDirection: "row",
+    alignItems: "flex-end",
     justifyContent: "space-between",
-    paddingHorizontal: spacing.regular,
-    height: TOP_BAR,
+    paddingHorizontal: Spacing.regular,
     width: "100%",
     backgroundColor: AppColors.semiDark,
   },
@@ -215,6 +264,10 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: AppColors.light,
+  },
+  date: {
+    fontSize: FontSize.regular,
+    color: AppColors.accent,
   },
   infoView: {
     position: "absolute",

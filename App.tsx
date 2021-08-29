@@ -1,26 +1,23 @@
 import "react-native-gesture-handler";
-import {StatusBar} from "expo-status-bar";
 import React from "react";
-import {StyleSheet, View} from "react-native";
 import {AppColors} from "./layout";
-import Home from "./src/screens/Home";
+import Apod from "./src/screens/Apod";
 import {NavigationContainer} from "@react-navigation/native";
 import {createDrawerNavigator} from "@react-navigation/drawer";
 import Favourites from "./src/screens/Favourites";
 import Recent from "./src/screens/Recent";
-import Search from "./src/screens/Search";
 import {MaterialCommunityIcons} from "@expo/vector-icons";
 
 const Drawer = createDrawerNavigator();
 
 export default function App() {
   const getIconColor = (focused: boolean) => {
-    return focused ? AppColors.semiDark : AppColors.light;
+    return focused ? AppColors.accent : AppColors.light;
   };
   return (
     <NavigationContainer>
       <Drawer.Navigator
-        initialRouteName="Home"
+        initialRouteName="APOD"
         screenOptions={{
           drawerType: "front",
           drawerActiveBackgroundColor: AppColors.dark,
@@ -33,13 +30,13 @@ export default function App() {
         }}
       >
         <Drawer.Screen
-          name="Today"
-          component={Home}
+          name="APOD"
+          component={Apod}
           options={{
             headerShown: false,
             drawerIcon: ({focused, size}) => (
               <MaterialCommunityIcons
-                name="home"
+                name="rocket"
                 size={size}
                 color={getIconColor(focused)}
               />
@@ -74,23 +71,7 @@ export default function App() {
             ),
           }}
         />
-        <Drawer.Screen
-          name="Search by date"
-          component={Search}
-          options={{
-            headerShown: false,
-            drawerIcon: ({focused, size}) => (
-              <MaterialCommunityIcons
-                name="calendar-search"
-                size={size}
-                color={getIconColor(focused)}
-              />
-            ),
-          }}
-        />
       </Drawer.Navigator>
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({});

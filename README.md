@@ -2,6 +2,8 @@
 
 This mini-app uses NASA's API to get today's picture/video and accompanying information. Users can zoom in on the image, browse previous APOD's, as well as store their favourites.
 
+[View the app using Expo](https://expo.io/@lwilsondev/apod)
+
 ## Features:
 
 ##### UI and information display

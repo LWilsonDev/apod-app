@@ -193,6 +193,14 @@ const Apod = ({navigation, route}: any) => {
     setShowPeep(!showPeep);
   };
 
+  const showHeaderContent = () => {
+    let show = false;
+    if (apod && !loading) {
+      show = showPeep || isVideo;
+    }
+    return show;
+  };
+
   return (
     <View style={styles.wrap}>
       <StatusBar hidden={true} />
@@ -231,7 +239,7 @@ const Apod = ({navigation, route}: any) => {
         ]}
       >
         <MenuIcon icon="menu" onPress={() => navigation.openDrawer()} />
-        {apod && !loading && showPeep && (
+        {showHeaderContent() ? (
           <>
             <TextButton
               accessLabel={`Currently viewing ${moment(date).format(
@@ -250,7 +258,7 @@ const Apod = ({navigation, route}: any) => {
               onPress={handleFavourite}
             />
           </>
-        )}
+        ) : null}
       </Animated.View>
     </View>
   );

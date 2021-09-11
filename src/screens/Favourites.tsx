@@ -1,8 +1,8 @@
 import moment from "moment";
 import React, {useEffect, useState} from "react";
-import {StyleSheet, Text} from "react-native";
+import {StyleSheet, Text, View} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
-import {AppColors} from "../../layout";
+import {AppColors, FontSize} from "../../layout";
 import {getFavourites} from "../helpers/FavouitesHelper";
 import MenuIcon from "../components/MenuIcon";
 import TextButton from "../components/TextButton";
@@ -26,7 +26,7 @@ const Favourites = ({navigation}: any) => {
   return (
     <SafeAreaView style={styles.wrap}>
       <MenuIcon icon="menu" onPress={() => navigation.openDrawer()} />
-      {favourites ? (
+      {favourites && favourites.length > 0 ? (
         favourites.map((date) => {
           return (
             <TextButton
@@ -44,7 +44,9 @@ const Favourites = ({navigation}: any) => {
           );
         })
       ) : (
-        <Text>No favourites yet</Text>
+        <View style={styles.empty}>
+          <Text style={styles.title}>No favourites yet</Text>
+        </View>
       )}
     </SafeAreaView>
   );
@@ -56,5 +58,14 @@ const styles = StyleSheet.create({
   wrap: {
     flex: 1,
     backgroundColor: AppColors.dark,
+  },
+  empty: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  title: {
+    color: AppColors.light,
+    fontSize: FontSize.regular,
   },
 });

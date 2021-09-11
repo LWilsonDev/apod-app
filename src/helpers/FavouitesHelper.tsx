@@ -5,9 +5,7 @@ const FAVOURITES_KEY = "favourites_key";
 export const getFavourites = async () => {
   try {
     const favourites = await AsyncStorage.getItem(FAVOURITES_KEY);
-    console.log("got favs", favourites);
     if (favourites !== null) {
-      console.log("should return favs");
       return favourites.split(",");
     }
   } catch (e) {
@@ -17,7 +15,6 @@ export const getFavourites = async () => {
 };
 
 const storeFavourites = async (favourites: object) => {
-  console.log("storing favourites", favourites);
   const stringToStore = favourites.toString();
   try {
     await AsyncStorage.setItem(FAVOURITES_KEY, stringToStore);
@@ -27,7 +24,6 @@ const storeFavourites = async (favourites: object) => {
 };
 
 export const addFavourite = async (date: string) => {
-  console.log("adding favourite", date);
   const favourites = await getFavourites();
   if (favourites && favourites.includes(date)) {
     return;

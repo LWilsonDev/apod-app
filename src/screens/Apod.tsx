@@ -1,21 +1,13 @@
 import React, {useEffect, useState} from "react";
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  useWindowDimensions,
-  View,
-} from "react-native";
-import {ApodData, APODResponse, fetchData} from "../api/api";
+import {StyleSheet, Text, useWindowDimensions, View} from "react-native";
+import {ApodData, APODResponse, convertDateForApi, fetchData} from "../api/api";
 import ApodImage from "../components/ApodImage";
 import {
   AppColors,
   BORDER_RADIUS,
-  BUTTON_SIZE,
   configNoSpring,
   configWithSpring,
   FontSize,
-  MENU_ICON_SIZE,
   OPACITY,
   PEEP_BTN_HEIGHT,
   Spacing,
@@ -47,6 +39,7 @@ import {
   checkIfFavourite,
   removeFavourite,
 } from "../helpers/FavouitesHelper";
+import TextButton from "../components/TextButton";
 
 const Apod = ({navigation, route}: any) => {
   const [apod, setApod] = useState<ApodData | null>(null);
@@ -68,7 +61,7 @@ const Apod = ({navigation, route}: any) => {
   const INFO_OPEN = TOP_BAR - Spacing.double;
   const INFO_HEIGHT = height - INFO_OPEN;
   const INFO_PEEP_SHOW = INFO_HEIGHT - PEEP_BTN_HEIGHT;
-  const INFO_CLOSED = isVideo ? INFO_PEEP_SHOW : INFO_HEIGHT;
+  const INFO_CLOSED = isVideo ? INFO_PEEP_SHOW : INFO_HEIGHT; // peep should show all the time if its a video
 
   const infoYPosition = useSharedValue(INFO_PEEP_SHOW);
 
@@ -80,15 +73,11 @@ const Apod = ({navigation, route}: any) => {
     };
   });
 
-  useEffect(() => {
-    console.log("translateY", infoYPosition.value);
-    console.log("showpeep", showPeep);
-  });
-
   const topMenuAnimatedStyle = useAnimatedStyle(() => {
     const opacity = isVideo
-      ? 1
+      ? 1 // top menu should show all the time if its a video
       : interpolate(
+          // else top menu only shows when peep shows
           infoYPosition.value,
           [INFO_CLOSED, INFO_PEEP_SHOW],
           [0, 1],
@@ -115,13 +104,12 @@ const Apod = ({navigation, route}: any) => {
     onEnd: ({translationY, velocityY}) => {
       const snapPointY = snapPoint(translationY, velocityY, snapPointsY);
       infoYPosition.value = withSpring(snapPointY, configNoSpring, () => {
-        runOnJS(setShowPeep)(isVideo ? true : false);
+        runOnJS(setShowPeep)(false);
       });
     },
   });
 
   const getApod = (date?: string) => {
-    console.log("get Apod", date);
     const dateForApi = date ?? "";
     setLoading(true);
     fetchData(dateForApi).then((res: APODResponse) => {
@@ -146,14 +134,6 @@ const Apod = ({navigation, route}: any) => {
     return unsubscribe;
   }, [apodParam]);
 
-  // useEffect(() => {
-  //   // Get today's apod on first load
-  //   if (apod) {
-  //     return;
-  //   }
-  //   getApod();
-  // }, [apod]);
-
   useEffect(() => {
     if (apod) {
       if (apod.media_type === "video") {
@@ -177,7 +157,7 @@ const Apod = ({navigation, route}: any) => {
   };
 
   const handleConfirmDatePick = (newDate: Date) => {
-    const dateForApi = moment(newDate).format("YYYY-MM-DD");
+    const dateForApi = convertDateForApi(newDate);
     if (dateForApi !== apod?.date) {
       getApod(dateForApi);
     }
@@ -197,14 +177,13 @@ const Apod = ({navigation, route}: any) => {
   };
 
   const handlePeepPress = () => {
-    // When peep is pressed, toggle info
-    const position = showPeep ? INFO_OPEN : INFO_CLOSED;
-    infoYPosition.value = withSpring(position, configNoSpring);
-    setShowPeep(isVideo ? true : false);
+    const infoIsOpen = infoYPosition.value === INFO_OPEN;
+    const destination = infoIsOpen ? INFO_CLOSED : INFO_OPEN;
+    infoYPosition.value = withSpring(destination, configNoSpring);
+    setShowPeep(false);
   };
 
   const handleImagePress = () => {
-    console.log("PRESS");
     // When the image is pressed, toggle peep
     const values = showPeep
       ? {to: INFO_CLOSED, config: configNoSpring}
@@ -227,13 +206,13 @@ const Apod = ({navigation, route}: any) => {
               width={width}
               height={height - TOP_BAR - PEEP_SIZE - Spacing.double}
               uri={apod?.url}
-              thumbnailUri={apod.thumbnail_url}
+              thumbnailUri={apod.thumbnail_url ?? ""}
             />
           ) : (
             <ApodImage onPress={handleImagePress} uri={apod.url} />
           ))}
 
-        {(apod && !loading) || isVideo ? (
+        {apod && !loading && (
           <Animated.View style={[styles.infoView, animInfoStyle]}>
             <PanGestureHandler onGestureEvent={eventHandler}>
               <Animated.View style={{width: "100%"}}>
@@ -242,7 +221,7 @@ const Apod = ({navigation, route}: any) => {
             </PanGestureHandler>
             <InfoText apod={apod} />
           </Animated.View>
-        ) : null}
+        )}
       </View>
       <Animated.View
         style={[
@@ -254,11 +233,13 @@ const Apod = ({navigation, route}: any) => {
         <MenuIcon icon="menu" onPress={() => navigation.openDrawer()} />
         {apod && !loading && showPeep && (
           <>
-            <Pressable style={styles.pressable} onPress={showDatePicker}>
-              <Text style={styles.date}>
-                {moment(date).format("MMM Do YY")}
-              </Text>
-            </Pressable>
+            <TextButton
+              accessLabel={`Currently viewing ${moment(date).format(
+                "MMM Do YY"
+              )}. Press to open date picker`}
+              text={moment(date).format("MMM Do YY")}
+              onPress={showDatePicker}
+            />
             <Search
               visible={isDatePickerVisible}
               onConfirm={handleConfirmDatePick}
@@ -288,11 +269,6 @@ const styles = StyleSheet.create({
     alignContent: "center",
     justifyContent: "center",
   },
-  pressable: {
-    minHeight: BUTTON_SIZE,
-    justifyContent: "center",
-    paddingHorizontal: Spacing.regular,
-  },
   starContainer: {
     flexDirection: "row",
     alignItems: "flex-end",
@@ -305,9 +281,7 @@ const styles = StyleSheet.create({
     color: AppColors.light,
     alignSelf: "center",
   },
-  buttonText: {
-    color: AppColors.light,
-  },
+
   date: {
     fontSize: FontSize.regular,
     color: AppColors.accent,

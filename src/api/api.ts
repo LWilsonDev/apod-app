@@ -1,5 +1,6 @@
 import axios, {AxiosResponse} from "axios";
 import Constants from "expo-constants";
+import moment from "moment";
 
 const NASA_API_KEY = Constants.manifest?.extra?.nasaApiKey || "DEMO_KEY";
 
@@ -27,7 +28,6 @@ export const fetchData = async (date?: string): Promise<APODResponse> => {
   let error = "";
   let data: ApodData | undefined = undefined;
   const url = date ? `${APOD_URL}&date=${date}` : APOD_URL;
-  console.log("url", url);
   await axios(url)
     .then((res) => {
       if (res.data) {
@@ -37,7 +37,12 @@ export const fetchData = async (date?: string): Promise<APODResponse> => {
     })
     .catch((e) => {
       success = false;
-      error = "Houston, we have a problem..." + e; // had to be done.;
+      error = "Houston, we have a problem..." + e;
+      console.log(error);
     });
   return {success, data, error};
+};
+
+export const convertDateForApi = (date: Date | string) => {
+  return moment(date).format("YYYY-MM-DD");
 };

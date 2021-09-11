@@ -1,33 +1,51 @@
 # NASA Astronomy Picture of the Day (APOD)
 
-### APOD: Astronomy Picture of the Day
+This mini-app uses NASA's API to get today's picture/video and accompanying information. Users can zoom in on the image, browse previous APOD's, as well as store their favourites.
 
-This uses NASA's API to get todays picture and accompanying information.
+## Features:
 
-I wanted to keep the UI clean and allow the user to tap to zoom in order to explore the image. I also wanted to display the information in an easy-to-read way. On NASA's official app, I find the UI cluttered and the scroll area for the text is far too small and quite annoying. To fix this in my app, I put the information in a draggable scrollView, that fills most of the screen. It animated on click and on drag gesture using Reanimated 2.
+##### UI and information display
 
-- Single tap on image shows the 'peep' button
-- Double tap on image to zoom
+I wanted to keep the UI clean and allow the user to tap to zoom in order to explore the image. I also wanted to display the information in an easy-to-read way. On NASA's official app, I find the UI cluttered and the scroll area for the text is far too small and quite annoying. To fix this in my app, I put the information in a draggable scrollView, that fills most of the screen. It animated on click and on drag gesture using [Reanimated 2](https://docs.swmansion.com/react-native-reanimated/).
+
+- **Single tap** on image shows the 'peep' button
+- **Double tap** on image to zoom
 - Peep button can be clicked, or dragged, revealing the information in a scroll-able container
 
-#### Technology used
+##### Search by date
+
+Users can click the date in the top bar of the APOD screen, and a date picker will appear. Selecting a date will show the user the APOD from that date.
+
+##### Favourites
+
+You can add an APOD to your 'favourites' by clicking the star icon. It will be stored on the phoe's async storage, and can be accessed in the favourites screen
+
+##### Video
+
+Occasionally NASA send a video instead of an image. If the video is not an embed link, users can play the video in-app, allowing full-screen view and full video controls. However, if the video is an embed link, users will have to leave the app to view the media on the web.
+
+---
+
+## Technology used
 
 - React Native
 - Expo
 - Reanimated 2
 - NASA API
 
-#### Considerations
+### Interesting bugs and findings
 
-#### Interesting bugs and findings
-
-Video:
+##### Video:
 
 The APOD Api occasionally sends a video instead of an image. I used the excellent expo-av library which works great, until a Youtube link comes along when it does not work at all...
 
 Expo has addressed the issue in the latest development of Expo SDK 42 where you can create custom development clients, enabling you to use a package like react-native-youtube that requires native builds. The down side of this is that you could no longer use Expo Go, as you would need to use EAS Build to build the iOS and Android builds. As I wanted the ease of using expo build and being able to share my project really easily using Expo Go, I had to handle Youtube videos separately, taking the user out of the app. Not an ideal solution, and for a production app I would definitely go the EAS route instead.
 
-PanGestureHandler:
+##### Neither Video or image:
+
+Occasionally NASA send the media labelled as 'video', when it is actually a link to an embedded image (rather than a link to an actual image file). This caused a bit of faff and was quite annoying as neither the image or video display would work. I had to check for this and offer to let the user view the media outside of the app.
+
+##### PanGestureHandler:
 
 I wanted to use PanGestureHandler so that users could drag the info up or down (as well as click the button), but the info itself needed to be a scroll view in case of long content. The structure for my first attempt looked like:
 
@@ -62,11 +80,7 @@ https://docs.expo.dev/guides/environment-variables/#using-a-dotenv-file
 
 #### How to run locally
 
-1. Clone this repo and ensure you have [Expo Cli](https://docs.expo.dev/get-started/installation/) installed
+1. Clone this repo and ensure you have [Expo CLI](https://docs.expo.dev/get-started/installation/) installed
 2. Get your NASA [API key](https://api.nasa.gov)
 3. Place your API key in .env.local and change the file name to `.env`
 4. Run `expo start`
-
-```
-
-```

@@ -35,6 +35,24 @@ Occasionally NASA send a video instead of an image. If the video is not an embed
 - Reanimated 2
 - NASA API
 
+## Accessibiity considerations
+
+- Button sizes: All buttons and touchable elements have a minimum height of 49px
+- Fonts: Default fonts were used at appropriate sizes. Font scaling has not been limited - this requires further testing to ensure the information remains readable if the user has their phone's font size turned up
+- Accessibility Labels: All pressable elements are labelled for screen readers
+- IsScreenReaderEnabled: A hook is in place to alter the layout if the screen reader is enabled. We want the 'Peep' button to be on screen at all times, so if a user is using a screen reader they should be able to toggle the information. In theory this should work but it is not currently working...
+- Image and Video content is labelled for screen readers
+
+To Test further:
+
+- font scaling
+- Native device voiceover/talkback
+- Tablet behaviour
+
+### Accessibility bugs/unknowns:
+
+I have found that when running the app via Expo Go, the voiceover behavior is not working well at all. I am not sure if this is to do with failings in the code, or peculiarities with Expo Go. I will need to run the app on a native device to properly investigate.
+
 ### Interesting bugs and findings
 
 ##### Video:

@@ -10,6 +10,7 @@ interface ApodVideoProps {
   thumbnailUri: string;
   height: number;
   width: number;
+  title: string;
 }
 
 const ApodVideo: React.FC<ApodVideoProps> = ({
@@ -17,6 +18,7 @@ const ApodVideo: React.FC<ApodVideoProps> = ({
   height,
   width,
   thumbnailUri,
+  title,
 }) => {
   const video = React.useRef(null);
 
@@ -52,21 +54,28 @@ const ApodVideo: React.FC<ApodVideoProps> = ({
 
   return (
     <View style={[styles.container]}>
-      <Video
-        usePoster={!status?.isLoaded}
-        posterSource={thumbnailUri ? {uri: thumbnailUri} : undefined}
-        ref={video}
-        style={[styles.video, {width, height: videoHeight()}]}
-        source={{
-          uri: uri,
-        }}
-        useNativeControls
-        resizeMode="contain"
-        isLooping={false}
-        onPlaybackStatusUpdate={(status) => {
-          setStatus(status);
-        }}
-      />
+      <View
+        accessible={true}
+        accessibilityLabel={
+          videoError ? "Error showing video" : `Video showing: ${title}`
+        }
+      >
+        <Video
+          usePoster={!status?.isLoaded}
+          posterSource={thumbnailUri ? {uri: thumbnailUri} : undefined}
+          ref={video}
+          style={[styles.video, {width, height: videoHeight()}]}
+          source={{
+            uri: uri,
+          }}
+          useNativeControls
+          resizeMode="contain"
+          isLooping={false}
+          onPlaybackStatusUpdate={(status) => {
+            setStatus(status);
+          }}
+        />
+      </View>
       {videoError && (
         <TextButton
           onPress={handlePress}

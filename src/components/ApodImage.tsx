@@ -2,18 +2,20 @@ import React, {useState} from "react";
 import {StyleSheet, Text, View, Image, useWindowDimensions} from "react-native";
 import ImageZoom from "react-native-image-pan-zoom";
 import {AppColors} from "../../layout";
+import {useAccessibilityService} from "../helpers/AccessibilityService";
 
 interface ApodImageProp {
   uri: string;
   onPress: () => void;
+  title: string;
 }
 
-const ApodImage: React.FC<ApodImageProp> = ({uri, onPress}) => {
+const ApodImage: React.FC<ApodImageProp> = ({uri, onPress, title}) => {
   const {width, height} = useWindowDimensions();
   const [loading, setLoading] = useState(true);
 
   return (
-    <View>
+    <View accessible={true} accessibilityLabel={`Image showing: ${title}`}>
       {loading ? <Text style={styles.loading}>Loading image...</Text> : null}
       <ImageZoom
         onClick={onPress}

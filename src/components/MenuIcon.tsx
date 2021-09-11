@@ -6,11 +6,16 @@ import {MaterialCommunityIcons} from "@expo/vector-icons";
 interface MenuIconProps {
   icon: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
   onPress?: () => void;
+  accessLabel: string;
 }
 
-const MenuIcon: React.FC<MenuIconProps> = ({icon, onPress}) => {
+const MenuIcon: React.FC<MenuIconProps> = ({icon, onPress, accessLabel}) => {
   return (
-    <Pressable onPress={onPress} style={[styles.pressable]}>
+    <Pressable
+      accessibilityLabel={accessLabel}
+      onPress={onPress}
+      style={[styles.pressable]}
+    >
       <MaterialCommunityIcons
         name={icon}
         size={MENU_ICON_SIZE}

@@ -25,7 +25,11 @@ const Favourites = ({navigation}: any) => {
 
   return (
     <SafeAreaView style={styles.wrap}>
-      <MenuIcon icon="menu" onPress={() => navigation.openDrawer()} />
+      <MenuIcon
+        accessLabel={"Open menu"}
+        icon="menu"
+        onPress={() => navigation.openDrawer()}
+      />
       {favourites && favourites.length > 0 ? (
         favourites.map((date) => {
           return (

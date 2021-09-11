@@ -40,6 +40,7 @@ import {
   removeFavourite,
 } from "../helpers/FavouitesHelper";
 import TextButton from "../components/TextButton";
+import {useAccessibilityService} from "../helpers/AccessibilityService";
 
 const Apod = ({navigation, route}: any) => {
   const [apod, setApod] = useState<ApodData | null>(null);
@@ -65,6 +66,10 @@ const Apod = ({navigation, route}: any) => {
 
   const infoYPosition = useSharedValue(INFO_PEEP_SHOW);
 
+  const {isScreenReaderEnabled} = useAccessibilityService();
+
+  const showInfoAllTime = isScreenReaderEnabled || isVideo;
+
   const snapPointsY = [INFO_CLOSED, INFO_OPEN];
   const animInfoStyle = useAnimatedStyle(() => {
     return {
@@ -74,7 +79,7 @@ const Apod = ({navigation, route}: any) => {
   });
 
   const topMenuAnimatedStyle = useAnimatedStyle(() => {
-    const opacity = isVideo
+    const opacity = showInfoAllTime
       ? 1 // top menu should show all the time if its a video
       : interpolate(
           // else top menu only shows when peep shows
@@ -135,6 +140,7 @@ const Apod = ({navigation, route}: any) => {
   }, [apodParam]);
 
   useEffect(() => {
+    console.log("screen reader", isScreenReaderEnabled);
     if (apod) {
       if (apod.media_type === "video") {
         setIsVideo(true);
@@ -196,7 +202,7 @@ const Apod = ({navigation, route}: any) => {
   const showHeaderContent = () => {
     let show = false;
     if (apod && !loading) {
-      show = showPeep || isVideo;
+      show = showPeep || showInfoAllTime;
     }
     return show;
   };
@@ -217,14 +223,23 @@ const Apod = ({navigation, route}: any) => {
               thumbnailUri={apod.thumbnail_url ?? ""}
             />
           ) : (
-            <ApodImage onPress={handleImagePress} uri={apod.url} />
+            <ApodImage
+              title={apod.title}
+              onPress={handleImagePress}
+              uri={apod.url}
+            />
           ))}
 
         {apod && !loading && (
           <Animated.View style={[styles.infoView, animInfoStyle]}>
             <PanGestureHandler onGestureEvent={eventHandler}>
               <Animated.View style={{width: "100%"}}>
-                <PeepButton onPress={handlePeepPress} />
+                <PeepButton
+                  accessLabel={
+                    showPeep ? "View Information" : "Hide Information"
+                  }
+                  onPress={handlePeepPress}
+                />
               </Animated.View>
             </PanGestureHandler>
             <InfoText apod={apod} />
@@ -238,7 +253,11 @@ const Apod = ({navigation, route}: any) => {
           isVideo ? {opacity: 1} : topMenuAnimatedStyle,
         ]}
       >
-        <MenuIcon icon="menu" onPress={() => navigation.openDrawer()} />
+        <MenuIcon
+          accessLabel={"Open menu"}
+          icon="menu"
+          onPress={() => navigation.openDrawer()}
+        />
         {showHeaderContent() ? (
           <>
             <TextButton
@@ -254,6 +273,9 @@ const Apod = ({navigation, route}: any) => {
               onCancel={hideDatePicker}
             />
             <MenuIcon
+              accessLabel={
+                isFavourite ? "Remove from favourites" : "Add to Favourites"
+              }
               icon={isFavourite ? "star" : "star-outline"}
               onPress={handleFavourite}
             />

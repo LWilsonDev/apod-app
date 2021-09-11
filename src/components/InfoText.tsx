@@ -9,7 +9,7 @@ interface InfoTextProps {
 
 const InfoText: React.FC<InfoTextProps> = ({apod}) => {
   return (
-    <ScrollView>
+    <ScrollView accessible={true}>
       <Text
         style={[styles.apodText, styles.title]}
         accessibilityRole={"header"}

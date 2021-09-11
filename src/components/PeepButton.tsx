@@ -5,14 +5,15 @@ import {MaterialIcons} from "@expo/vector-icons";
 
 interface PeepButtonProps {
   onPress: () => void;
+  accessLabel: string;
 }
 
-const PeepButton: React.FC<PeepButtonProps> = ({onPress}) => {
+const PeepButton: React.FC<PeepButtonProps> = ({onPress, accessLabel}) => {
   return (
     <Pressable
       style={{width: "100%"}}
       accessibilityRole={"button"}
-      accessibilityLabel={"View information"}
+      accessibilityLabel={accessLabel}
       onPress={onPress}
     >
       <View style={styles.drag}>

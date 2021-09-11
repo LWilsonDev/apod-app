@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Button, useWindowDimensions} from "react-native";
 import {StyleSheet, Text, View} from "react-native";
 import {Video, AVPlaybackStatus} from "expo-av";
@@ -21,6 +21,10 @@ const ApodVideo: React.FC<ApodVideoProps> = ({
 
   const [status, setStatus] = React.useState<AVPlaybackStatus | null>(null);
 
+  useEffect(() => {
+    console.log(uri);
+  }, []);
+
   return (
     <View style={[styles.container]}>
       <Video
@@ -29,7 +33,7 @@ const ApodVideo: React.FC<ApodVideoProps> = ({
         ref={video}
         style={[styles.video, {width, height}]}
         source={{
-          uri: "http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+          uri: uri,
         }}
         useNativeControls
         resizeMode="contain"

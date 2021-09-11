@@ -49,6 +49,6 @@ const styles = StyleSheet.create({
   copyright: {
     fontSize: FontSize.small,
     paddingTop: Spacing.double,
-    paddingBottom: 100,
+    paddingBottom: 200,
   },
 });

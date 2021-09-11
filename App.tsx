@@ -5,7 +5,6 @@ import Apod from "./src/screens/Apod";
 import {NavigationContainer} from "@react-navigation/native";
 import {createDrawerNavigator} from "@react-navigation/drawer";
 import Favourites from "./src/screens/Favourites";
-import Recent from "./src/screens/Recent";
 import {MaterialCommunityIcons} from "@expo/vector-icons";
 
 const Drawer = createDrawerNavigator();
@@ -51,20 +50,6 @@ export default function App() {
             drawerIcon: ({focused, size}) => (
               <MaterialCommunityIcons
                 name="star"
-                size={size}
-                color={getIconColor(focused)}
-              />
-            ),
-          }}
-        />
-        <Drawer.Screen
-          name="Recently viewed"
-          component={Recent}
-          options={{
-            headerShown: false,
-            drawerIcon: ({focused, size}) => (
-              <MaterialCommunityIcons
-                name="eye"
                 size={size}
                 color={getIconColor(focused)}
               />

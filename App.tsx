@@ -35,6 +35,7 @@ const Drawers: React.FC = () => {
           headerShown: false,
           drawerIcon: ({focused, size}) => (
             <MaterialCommunityIcons
+              accessible={false}
               name="rocket"
               size={size}
               color={getIconColor(focused)}
@@ -49,6 +50,7 @@ const Drawers: React.FC = () => {
           headerShown: false,
           drawerIcon: ({focused, size}) => (
             <MaterialCommunityIcons
+              accessible={false}
               name="star"
               size={size}
               color={getIconColor(focused)}

@@ -199,14 +199,6 @@ const Apod = ({navigation, route}: any) => {
     setShowPeep(!showPeep);
   };
 
-  const showHeaderContent = () => {
-    let show = false;
-    if (apod && !loading) {
-      show = showPeep || showInfoAllTime;
-    }
-    return show;
-  };
-
   return (
     <View style={styles.wrap}>
       <StatusBar hidden={true} />
@@ -217,6 +209,7 @@ const Apod = ({navigation, route}: any) => {
           !loading &&
           (apod.media_type === "video" ? (
             <ApodVideo
+              title={apod.title}
               width={width}
               height={height - TOP_BAR - PEEP_SIZE - Spacing.double}
               uri={apod?.url}
@@ -258,7 +251,7 @@ const Apod = ({navigation, route}: any) => {
           icon="menu"
           onPress={() => navigation.openDrawer()}
         />
-        {showHeaderContent() ? (
+        {apod ? (
           <>
             <TextButton
               accessLabel={`Currently viewing ${moment(date).format(

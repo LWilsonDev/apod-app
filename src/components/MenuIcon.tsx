@@ -13,6 +13,7 @@ const MenuIcon: React.FC<MenuIconProps> = ({icon, onPress, accessLabel}) => {
   return (
     <Pressable
       accessibilityLabel={accessLabel}
+      accessibilityRole={"button"}
       onPress={onPress}
       style={[styles.pressable]}
     >

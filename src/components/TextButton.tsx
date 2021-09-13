@@ -16,6 +16,7 @@ const TextButton: React.FC<TextButtonProps> = ({
 }) => {
   return (
     <Pressable
+      accessibilityRole={"button"}
       accessibilityLabel={accessLabel}
       style={styles.pressable}
       onPress={onPress}

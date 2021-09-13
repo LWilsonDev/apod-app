@@ -80,7 +80,7 @@ I wanted to use PanGestureHandler so that users could drag the info up or down (
 
 This worked very well on iOS but on Android the scrollView no longer scrolled, as the PanGestureHandler was taking over all gesture handling.
 
-The fix was to re-structure the component, keeping the PanGestureHandler only for the drag button. For Android this also required adding `clamping: {overshootClamping: false}` to the animation config to prevent the pan gesture from pulling the info up too high.
+The fix was to re-structure the component, keeping the PanGestureHandler only for the drag button. This also required adding `clamping: {overshootClamping: false}` to the animation config and checking for the current position to handle the case where the info is pulled beyond the upper limit.
 
 ```
 <Animated.View>
@@ -95,8 +95,7 @@ The fix was to re-structure the component, keeping the PanGestureHandler only fo
 
 ##### API key
 
-Storing the Api key securely. I set up a .env file to keep the API key out of source control.
-https://docs.expo.dev/guides/environment-variables/#using-a-dotenv-file
+Storing the Api key securely. I set up a [.env file](https://docs.expo.dev/guides/environment-variables/#using-a-dotenv-file) to keep the API key out of source control.
 
 #### How to run locally
 

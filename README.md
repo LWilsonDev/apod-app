@@ -55,6 +55,10 @@ I have found that when running the app via Expo Go, the voiceover behavior is no
 
 ### Interesting bugs and findings
 
+### iOS Dark mode
+
+Currently the date picker is not taking the device's dark mode and is therefore too light/dark. TODO!
+
 ##### Video:
 
 The APOD Api occasionally sends a video instead of an image. I used the excellent expo-av library which works great, until a Youtube link comes along when it does not work at all...

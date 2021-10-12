@@ -8,7 +8,7 @@ interface SearchProps {
 }
 
 export const NASA_FIRST_APOD = "1995-06-16";
-
+//TODO Handle dark mode for iOS - isDarkModeEnabled={true}
 const Search: React.FC<SearchProps> = ({visible, onCancel, onConfirm}) => {
   return (
     <DateTimePickerModal

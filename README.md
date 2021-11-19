@@ -55,9 +55,13 @@ I have found that when running the app via Expo Go, the voiceover behavior is no
 
 ### Interesting bugs and findings
 
+### UI issues
+
+When watching some friends try out the app, I realised my idea of the 'peep' button being the drag handle was not as obvious as I had thought! In the future I would rethink this design, but for now I have added a separating line to hopefully show to the user where the 'draggable' part is.
+
 ### iOS Dark mode
 
-Currently the date picker is not taking the device's dark mode and is therefore too light/dark. TODO!
+The date picker was refusing to adapt to the user's dark mode selection. Using react-native 'appearance' together with the date picker's darkModeEnabled prop was not working as it should. in the end, I set the preference to 'light' in app.json and hardcoded the datePicker textColor prop to black. Not an ideal solution.
 
 ##### Video:
 

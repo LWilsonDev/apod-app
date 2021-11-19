@@ -1,6 +1,6 @@
 import React from "react";
 import {Pressable, StyleSheet, Text, View} from "react-native";
-import {AppColors, BUTTON_SIZE, PEEP_BTN_HEIGHT} from "../../layout";
+import {AppColors, BUTTON_SIZE, PEEP_BTN_HEIGHT, Spacing} from "../../layout";
 import {MaterialIcons} from "@expo/vector-icons";
 
 interface PeepButtonProps {
@@ -11,7 +11,7 @@ interface PeepButtonProps {
 const PeepButton: React.FC<PeepButtonProps> = ({onPress, accessLabel}) => {
   return (
     <Pressable
-      style={{width: "100%"}}
+      style={styles.pressable}
       accessibilityRole={"button"}
       accessibilityLabel={accessLabel}
       onPress={onPress}
@@ -31,5 +31,11 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "flex-start",
+    borderBottomWidth: 0.5,
+    borderBottomColor: AppColors.light,
+  },
+  pressable: {
+    width: "100%",
+    paddingBottom: Spacing.regular,
   },
 });

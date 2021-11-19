@@ -8,7 +8,7 @@ interface SearchProps {
 }
 
 export const NASA_FIRST_APOD = "1995-06-16";
-//TODO Handle dark mode for iOS - isDarkModeEnabled={true}
+
 const Search: React.FC<SearchProps> = ({visible, onCancel, onConfirm}) => {
   return (
     <DateTimePickerModal
@@ -17,6 +17,7 @@ const Search: React.FC<SearchProps> = ({visible, onCancel, onConfirm}) => {
       onConfirm={onConfirm}
       onCancel={onCancel}
       confirmTextIOS={"OK"}
+      textColor="black"
       maximumDate={new Date()}
       minimumDate={new Date(NASA_FIRST_APOD)}
     />

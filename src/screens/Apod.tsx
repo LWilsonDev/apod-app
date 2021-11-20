@@ -140,13 +140,8 @@ const Apod = ({navigation, route}: any) => {
   }, [apodParam]);
 
   useEffect(() => {
-    console.log("screen reader", isScreenReaderEnabled);
     if (apod) {
-      if (apod.media_type === "video") {
-        setIsVideo(true);
-      } else {
-        setIsVideo(false);
-      }
+      setIsVideo(apod.media_type === "video");
       checkIfFavourite(apod.date).then((isFavourite) => {
         setIsFavourite(isFavourite);
       });
